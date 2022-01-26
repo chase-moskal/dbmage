@@ -4,16 +4,18 @@ import {Collection, MongoClient, TransactionOptions} from "mongodb"
 import {objectMap} from "../tools/object-map.js"
 import {down, downs, up, ups} from "./mongo/conversions.js"
 import {orderToSort, prepareQuery} from "./mongo/queries.js"
-import {pathToStorageKey} from "./utils/path-to-storage-key.js"
+import {makeTableNameWithUnderscores} from "./utils/make-table-name-with-underscores.js"
 import {AmbiguousUpdate, MongoDatabase, Row, Schema, SchemaToShape, SchemaToTables, Shape, Table, Tables} from "../types.js"
 
 export function mongo<xSchema extends Schema>({
 		dbName, client, shape, transactionOptions,
+		makeTableName = makeTableNameWithUnderscores,
 	}: {
 		dbName: string
 		client: MongoClient
 		shape: SchemaToShape<xSchema>
 		transactionOptions?: TransactionOptions
+		makeTableName?: (path: string[]) => string
 	}): MongoDatabase<xSchema> {
 
 	const db = client.db(dbName)
@@ -71,7 +73,7 @@ export function mongo<xSchema extends Schema>({
 		function recurse(shape: Shape, path: string[]): Tables {
 			return objectMap(shape, (value, key) =>{
 				const currentPath = [...path, key]
-				const storageKey = pathToStorageKey(currentPath)
+				const storageKey = makeTableName(currentPath)
 				const collection = db.collection(storageKey)
 				return typeof value === "boolean"
 					? makeTable(collection)

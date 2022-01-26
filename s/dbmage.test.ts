@@ -11,7 +11,7 @@ import {getRando} from "./rando/get-rando.js"
 import {constrain} from "./handy/constraints.js"
 import {FlexStorage, Row, SchemaToShape, Table} from "./types.js"
 import {memoryFlexStorage} from "./flex-storage/memory-flex-storage.js"
-import {pathToStorageKey} from "./drivers/utils/path-to-storage-key.js"
+import {makeTableNameWithUnderscores} from "./drivers/utils/make-table-name-with-underscores.js"
 
 type DemoUser = {
 	userId: string
@@ -28,7 +28,7 @@ const demoShape: SchemaToShape<DemoSchema> = {
 }
 
 async function setupThreeUserDatabase() {
-	const database = dbproxy.memory<DemoSchema>(demoShape)
+	const database = dbproxy.memory<DemoSchema>({shape: demoShape})
 	await Promise.all([
 		database.tables.users.create({userId: "u123", balance: 100, location: "america"}),
 		database.tables.users.create({userId: "u124", balance: 0, location: "canada"}),
@@ -235,7 +235,7 @@ export default <Suite>{
 		},
 		"save and load ids": async() => {
 			const rando = await getRando()
-			const {tables: {table}} = dbproxy.memory<{table: {id: Id, a: number}}>({table: true})
+			const {tables: {table}} = dbproxy.memory<{table: {id: Id, a: number}}>({shape: {table: true}})
 			const a1 = {id: rando.randomId(), a: 1}
 			const a2 = {id: rando.randomId(), a: 2}
 			await table.create(a1)
@@ -260,9 +260,12 @@ export default <Suite>{
 						charlie: {x: string}
 					}
 				}
-			}>(storageSpy, {alpha: {bravo: {charlie: true}}})
+			}>({
+				flexStorage: storageSpy,
+				shape: {alpha: {bravo: {charlie: true}},
+			}})
 			await tables.alpha.bravo.charlie.create({x: "abc"})
-			expect(keyThatWasWrittenTo).equals(pathToStorageKey(["alpha", "bravo", "charlie"]))
+			expect(keyThatWasWrittenTo).equals(makeTableNameWithUnderscores(["alpha", "bravo", "charlie"]))
 		},
 	},
 	"flex database transactions": {
@@ -337,7 +340,7 @@ export default <Suite>{
 		"read": async() => {
 			const {users} = await setupThreeUserDemo()
 			const {tables: {users: usersFallback}}
-				= dbproxy.memory<DemoSchema>(demoShape)
+				= dbproxy.memory<DemoSchema>({shape: demoShape})
 			await usersFallback.create({userId: "u92", balance: 92, location: "victoria"})
 			const combinedTable = fallback({table: users, fallbackTable: usersFallback})
 			const result01 = await combinedTable.read({conditions: false})
@@ -358,7 +361,7 @@ export default <Suite>{
 		}
 		return {
 			"read all rows from constrained table": async() => {
-				const {tables: {users}} = dbproxy.memory<DemoSchema>(demoShape)
+				const {tables: {users}} = dbproxy.memory<DemoSchema>({shape: demoShape})
 				const alpha = constrainAppTable(users, "a1")
 				await alpha.create(
 					{userId: "u1", balance: 101, location: "canada"},
@@ -368,7 +371,7 @@ export default <Suite>{
 				expect(results.length).equals(2)
 			},
 			"apply app id constraint": async() => {
-				const {tables: {users}} = dbproxy.memory<DemoSchema>(demoShape)
+				const {tables: {users}} = dbproxy.memory<DemoSchema>({shape: demoShape})
 				const a1 = constrainAppTable(users, "a1")
 				const a2 = constrainAppTable(users, "a2")
 				await a1.create({userId: "u1", balance: 100, location: "america"})
@@ -397,13 +400,13 @@ export default <Suite>{
 						loltable: {n: number}
 					},
 				}
-			}>({
+			}>({shape: {
 				layer1: {
 					layer2: {
 						loltable: true,
 					},
 				},
-			})
+			}})
 			await database.tables.layer1.layer2.loltable.create(
 				{n: 1},
 				{n: 2},
@@ -422,13 +425,13 @@ export default <Suite>{
 						loltable: {n: number}
 					},
 				}
-			}>({
+			}>({shape: {
 				layer1: {
 					layer2: {
 						loltable: true,
 					},
 				},
-			})
+			}})
 			await database.tables.layer1.layer2.loltable.create(
 				{n: 1},
 				{n: 2},

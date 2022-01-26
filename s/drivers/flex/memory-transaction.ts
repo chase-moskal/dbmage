@@ -4,15 +4,16 @@ import {applyOperation} from "./apply-operation.js"
 import {objectMap} from "../../tools/object-map.js"
 import {prefixFunctions} from "./prefix-functions.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
-import {pathToStorageKey} from "../utils/path-to-storage-key.js"
+import {makeTableNameWithUnderscores} from "../utils/make-table-name-with-underscores.js"
 import {Action, Row, Shape, Table, Tables, Operation, RemoveIndex} from "../../types.js"
 
 export async function memoryTransaction({
-		shape, storage, action,
+		shape, rowStorage, action, makeTableName,
 	}: {
 		shape: Shape
-		storage: RowStorage
+		rowStorage: RowStorage
 		action: Action<Tables, any>
+		makeTableName: (path: string[]) => string
 	}) {
 
 	const operations: Operation.Any[] = []
@@ -21,11 +22,11 @@ export async function memoryTransaction({
 		function recurse(shape: Shape, path: string[]): Tables {
 			return objectMap(shape, (value, key) => {
 				const currentPath = [...path, key]
-				const storageKey = pathToStorageKey(currentPath)
+				const storageKey = makeTableNameWithUnderscores(currentPath)
 				let cache: Row[] = undefined
 				async function loadCacheOnce() {
 					if (!cache)
-						cache = await storage.load(storageKey)
+						cache = await rowStorage.load(storageKey)
 				}
 				return typeof value === "boolean"
 					? <Table<Row>>prefixFunctions(loadCacheOnce, <RemoveIndex<Table<Row>>>{
@@ -95,18 +96,18 @@ export async function memoryTransaction({
 	if (!aborted) {
 		const loadedRows = new Map<string, Row[]>()
 		for (const {path} of operations) {
-			const storageKey = pathToStorageKey(path)
-			const rows = await storage.load(storageKey)
+			const storageKey = makeTableNameWithUnderscores(path)
+			const rows = await rowStorage.load(storageKey)
 			loadedRows.set(storageKey, rows)
 		}
 		for (const operation of operations) {
-			const storageKey = pathToStorageKey(operation.path)
+			const storageKey = makeTableNameWithUnderscores(operation.path)
 			const rows = loadedRows.get(storageKey)
 			const modifiedRows = applyOperation({operation, rows})
 			loadedRows.set(storageKey, modifiedRows)
 		}
 		for (const [storageKey, rows] of loadedRows.entries()) {
-			await storage.save(storageKey, rows)
+			await rowStorage.save(storageKey, rows)
 		}
 	}
 
