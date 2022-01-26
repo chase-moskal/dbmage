@@ -11,7 +11,7 @@ import {getRando} from "./rando/get-rando.js"
 import {constrain} from "./handy/constraints.js"
 import {FlexStorage, Row, SchemaToShape, Table} from "./types.js"
 import {memoryFlexStorage} from "./flex-storage/memory-flex-storage.js"
-import {pathToStorageKey} from "./databases/utils/path-to-storage-key.js"
+import {pathToStorageKey} from "./drivers/utils/path-to-storage-key.js"
 
 type DemoUser = {
 	userId: string

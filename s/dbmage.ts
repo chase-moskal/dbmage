@@ -13,5 +13,5 @@ export * from "./handy/is-table.js"
 export * from "./handy/subsection.js"
 export * from "./handy/constraints.js"
 
-export * from "./databases/flex.js"
-export * from "./databases/memory.js"
+export * from "./drivers/flex.js"
+export * from "./drivers/memory.js"
