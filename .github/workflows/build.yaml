@@ -1,0 +1,31 @@
+
+name: build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: 🔔 checkout
+      uses: actions/checkout@v2
+
+    - name: 🔧 setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '17'
+
+    - name: 📦 install dependencies
+      run: npm ci
+
+    - name: 🔨 build
+      run: npm run build
+
+    - name: 🧪 test
+      run: npm test

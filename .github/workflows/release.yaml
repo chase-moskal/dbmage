@@ -1,0 +1,34 @@
+
+name: release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'chase-moskal'
+    steps:
+
+    - name: 🔔 checkout
+      uses: actions/checkout@v2
+
+    - name: 🔧 setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '17'
+
+    - name: 📦 install dependencies
+      run: npm ci
+
+    - name: 🔨 build
+      run: npm run build
+
+    - name: 🧪 test
+      run: npm test
+
+    - name: 🚀 npm publish
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
