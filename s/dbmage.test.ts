@@ -317,6 +317,21 @@ export default <Suite>{
 				expect(row.location).equals("argentina")
 			})
 		},
+		"subsequent transaction reads fresh data": async() => {
+			const database = await setupThreeUserDatabase()
+			await database.transaction(async({tables}) => {
+				await tables.users.update({
+					conditions: and({equal: {userId: "u123"}}),
+					write: {location: "afghanistan"},
+				})
+			})
+			const row = await database.transaction(async({tables}) => {
+				return tables.users.readOne({
+					conditions: and({equal: {userId: "u123"}})
+				})
+			})
+			expect(row.location).equals("afghanistan")
+		}
 	},
 	"fallback": {
 		"read": async() => {
