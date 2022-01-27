@@ -165,6 +165,31 @@ const database = dbmage.mongo({
 })
 ```
 
+### use `localStorage` as a database (in browser)
+
+```js
+import * as dbmage from "dbmage"
+
+const database = dbmage.localStorage({
+  shape: {
+    myTable: true,
+  },
+})
+```
+
+### use a json file as a database (in node)
+
+```js
+import {file} from "dbmage/x/drivers/file.js"
+
+const database = file({
+  path: "./database.json",
+  shape: {
+    myTable: true,
+  },
+})
+```
+
 <br/>
 
 ## the devil is in the details
