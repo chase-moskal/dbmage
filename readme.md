@@ -238,7 +238,7 @@ also, all conditions have a `not` version that checks the opposite
 
 there are a few different types of updates
 
-- `write` – add/replace fields on a row (leaving other fields intact)
+- `write` – add/replace fields (leaving other fields intact)
   ```js
   await table.update({
     ...find({userId: 1}),
@@ -247,11 +247,11 @@ there are a few different types of updates
     },
   })
   ```
-- `whole` – replace a whole row entirely
+- `whole` – replace whole rows entirely
   ```js
   await table.update({
     ...find({userId: 1}),
-    write: {
+    whole: {
       userId: 1,
       email: "superuser1@example.com"
     },
