@@ -4,7 +4,6 @@ import {applyOperation} from "./apply-operation.js"
 import {objectMap} from "../../tools/object-map.js"
 import {prefixFunctions} from "./prefix-functions.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
-import {makeTableNameWithUnderscores} from "../utils/make-table-name-with-underscores.js"
 import {Action, Row, Shape, Table, Tables, Operation, RemoveIndex} from "../../types.js"
 
 export async function memoryTransaction({
@@ -22,7 +21,7 @@ export async function memoryTransaction({
 		function recurse(shape: Shape, path: string[]): Tables {
 			return objectMap(shape, (value, key) => {
 				const currentPath = [...path, key]
-				const storageKey = makeTableNameWithUnderscores(currentPath)
+				const storageKey = makeTableName(currentPath)
 				let cache: Row[] = undefined
 				async function loadCacheOnce() {
 					if (!cache)
@@ -96,12 +95,12 @@ export async function memoryTransaction({
 	if (!aborted) {
 		const loadedRows = new Map<string, Row[]>()
 		for (const {path} of operations) {
-			const storageKey = makeTableNameWithUnderscores(path)
+			const storageKey = makeTableName(path)
 			const rows = await rowStorage.load(storageKey)
 			loadedRows.set(storageKey, rows)
 		}
 		for (const operation of operations) {
-			const storageKey = makeTableNameWithUnderscores(operation.path)
+			const storageKey = makeTableName(operation.path)
 			const rows = loadedRows.get(storageKey)
 			const modifiedRows = applyOperation({operation, rows})
 			loadedRows.set(storageKey, modifiedRows)
