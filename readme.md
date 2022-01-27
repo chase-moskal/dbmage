@@ -14,7 +14,7 @@
 &nbsp; 🔖 **localStorage driver** – stow your data in-browser  
 &nbsp; 🔮 **flex driver** – store your data anywhere  
 &nbsp; 📜 **transactions** – keep your data safe  
-&nbsp; 🎶 **rando** – randomly generate 256-bit ids  
+&nbsp; 🎟️ **rando** – randomly generate 256-bit ids  
 &nbsp; 🔬 **typescript** – painstakingly engineered types  
 &nbsp; 💖 **free and open source** – just for you  
 
