@@ -58,12 +58,10 @@ the localStorage driver is also interesting. in the [xiome](https://github.com/c
   ```
 - read all rows in a table
   ```js
-  // read all rows in a table
   const rows = await database.tables.myTable.read({conditions: false})
   ```
 - read one particular row
   ```js
-  // read one particular row
   const row = await database.tables.myTable.readOne(find({userId: 1}))
   ```
 - read with fancy conditions
