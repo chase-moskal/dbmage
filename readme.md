@@ -287,7 +287,7 @@ for this, you should use dbmage's `Id` class, which stores ids in a 256-bit bina
 
 ### subsection
 
-sometimes you don't want to be passing your whole database down to all your apps subsystems.
+sometimes you don't want to be passing your whole database down to all your app's subsystems.
 
 so you can carve off a subsection to pass relevant pieces along.
 
@@ -401,3 +401,11 @@ const databaseForApp4 = dbmage.subsection(database, tables => constrainTables({
   constraint: {appId: 4},
 }))
 ```
+
+<br/>
+
+## 💖 made with open source love
+
+please consider contributing by posting github issues to ask questions, file bugs, or making suggestions
+
+&nbsp; 🍻 chase
