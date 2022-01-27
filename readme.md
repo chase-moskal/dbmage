@@ -3,14 +3,15 @@
 
 # 🧙‍♂️ dbmage
 
-`npm install dbmage`
+📦 `npm install dbmage`
 
 ### database abstraction layer
 
 &nbsp; 🗄️ **crud** – create, read, update, delete  
-&nbsp; 📗 **mongodb driver** – store your data  
+&nbsp; 📗 **mongo driver** – store your data  
 &nbsp; 🧪 **memory driver** – emulate your database  
-&nbsp; 📁 **file driver** – keep your data in a json file  
+&nbsp; 💾 **file driver** – keep your data in a json file  
+&nbsp; 🔖 **localStorage driver** – stow your data in-browser  
 &nbsp; 🔮 **flex driver** – store your data anywhere  
 &nbsp; 📜 **transactions** – keep your data safe  
 &nbsp; 🎶 **rando** – randomly generate 256-bit ids  
@@ -19,7 +20,7 @@
 
 ### dbmage makes our apps database-agnostic
 
-dbmage provides our apps with a straightforward interface to communicate with the database. dbmage is designed to be compatible with both nosql and sql databases. at the moment, we've only implemented the `mongodb` driver (though a `postgres` driver would be an awesome contribution).
+dbmage provides our apps with a straightforward interface to communicate with the database. dbmage is designed to be compatible with both nosql and sql databases. at the moment, we've only implemented the `mongo` driver (though a `postgres` driver would be an awesome contribution).
 
 the memory driver allows us to fully emulate our database, which is very useful for writing good tests. in each test, we can pass our app a dbmage database which uses the memory driver.
 
@@ -29,86 +30,86 @@ the localStorage driver is also interesting. in the [xiome](https://github.com/c
 
 ## let's play with a dbmage in-memory database
 
-- make a memory database
-  ```js
-  import * as dbmage from "dbmage"
-  import {find, and, or} from "dbmage"
+make a memory database
+```js
+import * as dbmage from "dbmage"
+import {find, and, or} from "dbmage"
 
-  const database = dbmage.memory({
-    // tell dbmage about the shape of your database schema
-    shape: {
-      myTable: true,
-    },
-  })
+const database = dbmage.memory({
+  // tell dbmage about the shape of your database schema
+  shape: {
+    myTable: true,
+  },
+})
 
-  ```
-- insert a row
-  ```js
-  await database.tables.myTable.create({
-    userId: 1,
-    email: "user1@example.com",
-  })
-  ```
-- insert more rows
-  ```js
-  await database.tables.myTable.create(
-    {userId: 2, email: "user2@example.com"},
-    {userId: 3, email: "user3@example.com"},
-  )
-  ```
-- read all rows in a table
-  ```js
-  const rows = await database.tables.myTable.read({conditions: false})
-  ```
-- read one particular row
-  ```js
-  const row = await database.tables.myTable.readOne(find({userId: 1}))
-  ```
-- read with fancy conditions
-  ```js
-  const rows2 = await database.tables.myTable.read({
-    conditions: or(
-      {search: {email: /example\.com$/i}},
-      and(
-        {greater: {userId: 0}},
-        {less: {userId: 999}},
-      ),
+```
+insert a row
+```js
+await database.tables.myTable.create({
+  userId: 1,
+  email: "user1@example.com",
+})
+```
+insert more rows
+```js
+await database.tables.myTable.create(
+  {userId: 2, email: "user2@example.com"},
+  {userId: 3, email: "user3@example.com"},
+)
+```
+read all rows in a table
+```js
+const rows = await database.tables.myTable.read({conditions: false})
+```
+read one particular row
+```js
+const row = await database.tables.myTable.readOne(find({userId: 1}))
+```
+read with fancy conditions
+```js
+const rows2 = await database.tables.myTable.read({
+  conditions: or(
+    {search: {email: /example\.com$/i}},
+    and(
+      {greater: {userId: 0}},
+      {less: {userId: 999}},
     ),
-  })
-  ```
-- read rows with pagination controls
-  ```js
-  const rows3 = await database.tables.myTable.read({
-    conditions: false,
-    limit: 10,
-    offset: 5,
-    order: {userId: "descend"},
-  })
-  ```
-- update a row
-  ```js
-  await database.tables.myTable.update({
-    ...find({userId: 1}),
-    write: {email: "superuser1@example.com"},
-  })
-  ```
-- delete a row
-  ```js
-  await database.tables.myTable.delete(find({userId: 2}))
-  ```
-- count rows
-  ```js
-  const count = await database.tables.myTable.count({conditions: false})
-  ```
-- transactions? even in-memory? you betchya!
-  ```js
-  const result = await database.transaction(async({tables, abort}) => {
-    await tables.myTable.delete(find({userId: 1}))
-    await tables.myTable.create({userId: 4, email: "user4@example.com"})
-    const result = await tables.myTable.count({conditions: false})
-    return result
-  })
-  ```
+  ),
+})
+```
+read rows with pagination controls
+```js
+const rows3 = await database.tables.myTable.read({
+  conditions: false,
+  limit: 10,
+  offset: 5,
+  order: {userId: "descend"},
+})
+```
+update a row
+```js
+await database.tables.myTable.update({
+  ...find({userId: 1}),
+  write: {email: "superuser1@example.com"},
+})
+```
+delete a row
+```js
+await database.tables.myTable.delete(find({userId: 2}))
+```
+count rows
+```js
+const count = await database.tables.myTable.count({conditions: false})
+```
+transactions? even in-memory? you betchya!
+```js
+const result = await database.transaction(async({tables, abort}) => {
+  await tables.myTable.delete(find({userId: 1}))
+  await tables.myTable.create({userId: 4, email: "user4@example.com"})
+  const result = await tables.myTable.count({conditions: false})
+  return result
+})
+```
 
 ### you can nest tables arbitrarily
 
@@ -148,7 +149,9 @@ const database = dbmage.memory<MyDatabaseSchema>({
 })
 ```
 
-### connect to mongodb, for real
+<br/>
+
+## connect to `mongo`, for real
 
 ```js
 import mongodb from "mongodb"
@@ -163,7 +166,9 @@ const database = dbmage.mongo({
 })
 ```
 
-### use `localStorage` as a database (in browser)
+<br/>
+
+## use `localStorage` as a database (in browser)
 
 ```js
 import * as dbmage from "dbmage"
@@ -175,7 +180,9 @@ const database = dbmage.localStorage({
 })
 ```
 
-### use a json file as a database (in node)
+<br/>
+
+## use a `json file` as a database (in node)
 
 ```js
 import {file} from "dbmage/x/drivers/file.js"
