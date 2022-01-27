@@ -339,10 +339,10 @@ export default <Suite>{
 	"fallback": {
 		"read": async() => {
 			const {users} = await setupThreeUserDemo()
-			const {tables: {users: usersFallback}}
-				= dbproxy.memory<DemoSchema>({shape: demoShape})
-			await usersFallback.create({userId: "u92", balance: 92, location: "victoria"})
-			const combinedTable = fallback({table: users, fallbackTable: usersFallback})
+			const combinedTable = fallback({
+				table: users,
+				fallbackRows: [{userId: "u92", balance: 92, location: "victoria"}],
+			})
 			const result01 = await combinedTable.read({conditions: false})
 			const result02 = await combinedTable.read(find({userId: "u92"}))
 			expect(result01.length).equals(4)
