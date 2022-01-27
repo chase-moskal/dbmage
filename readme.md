@@ -275,8 +275,9 @@ you should know there's also an assert helper
     database.tables.accounts,
     find({userId: 1}),
     async make() {
-      await database.tables.privileges.create({userId: 1, isAdmin: false})
-      return {userId, isAdmin: false}
+      const row = {userId: 1, isAdmin: false}
+      await database.tables.privileges.create(row)
+      return row
     },
   )
   ```
