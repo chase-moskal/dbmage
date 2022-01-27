@@ -114,9 +114,9 @@ const result = await database.transaction(async({tables, abort}) => {
 ### you can nest tables arbitrarily
 
 ```js
-import {memory} from "dbmage"
+import * as dbmage from "dbmage"
 
-const database = memory({
+const database = dbmage.memory({
   shape: {
     alpha: {
       bravo: {
@@ -213,7 +213,7 @@ const database = file({
       conditions: and(
         or(
           {equal: {userId: 1}},
-          {equal: {email: "user1@example.com"}}
+          {equal: {email: "user1@example.com"}},
         ),
         or({greater: {userId: 0}}),
       )
@@ -250,7 +250,7 @@ there are a few different types of updates
   await table.update({
     ...find({userId: 1}),
     write: {
-      email: "superuser1@example.com"
+      email: "superuser1@example.com",
     },
   })
   ```
@@ -260,7 +260,7 @@ there are a few different types of updates
     ...find({userId: 1}),
     whole: {
       userId: 1,
-      email: "superuser1@example.com"
+      email: "superuser1@example.com",
     },
   })
   ```
@@ -270,7 +270,7 @@ there are a few different types of updates
     ...find({userId: 1}),
     upsert: {
       userId: 1,
-      email: "superuser1@example.com"
+      email: "superuser1@example.com",
     },
   })
   ```
@@ -322,7 +322,7 @@ for this, you should use dbmage's `Id` class, which stores ids in a 256-bit bina
   ```js
   rando.compare(
     id1.toString(),
-    id2.toString()
+    id2.toString(),
   )
   ```
 
@@ -395,7 +395,7 @@ const combinedDatabase = dbmage.subsection(database, tables => ({
   ...tables,
   alphaTable: fallback({
     table: tables.alphaTable,
-    fallbackRows: [{userId: 1}]
+    fallbackRows: [{userId: 1}],
   })
 }))
 ```
@@ -429,7 +429,7 @@ const alphaForApp5 = dbmage.constrain({
 })
 
 // we can create a row for app4
-await alphaForApp4.create({userId: 1}),
+await alphaForApp4.create({userId: 1})
 
 // and app5 cannot find it
 const user = await alphaForApp5.readOne(find({userId: 1}))
@@ -437,7 +437,7 @@ const user = await alphaForApp5.readOne(find({userId: 1}))
 // also, you can apply a constraint on a whole tree of tables
 const tablesForApp4 = dbmage.constrainTables({
   tables: database.tables,
-  constraint: {appId: 4}
+  constraint: {appId: 4},
 })
 
 // create a database subsection to apply a constraint that works in transactions
