@@ -15,6 +15,7 @@ export * from "./handy/constraints.js"
 
 export * from "./drivers/flex.js"
 export * from "./drivers/memory.js"
+export * from "./drivers/local-storage.js"
 
 export * from "./tools/is-node.js"
 export * from "./tools/binary/hex.js"
