@@ -28,7 +28,7 @@ the localStorage driver is also interesting. in the [xiome](https://github.com/c
 
 <br/>
 
-## let's play with a dbmage in-memory database
+## 🧪 let's play with a dbmage in-memory database
 
 make a memory database
 ```js
@@ -151,7 +151,7 @@ const database = dbmage.memory<MyDatabaseSchema>({
 
 <br/>
 
-## connect to `mongo`, for real
+## 📗 connect to `mongo`, for real
 
 ```js
 import mongodb from "mongodb"
@@ -168,7 +168,7 @@ const database = dbmage.mongo({
 
 <br/>
 
-## use `localStorage` as a database (in browser)
+## 🔖 use `localStorage` as a database (in browser)
 
 ```js
 import * as dbmage from "dbmage"
@@ -182,7 +182,7 @@ const database = dbmage.localStorage({
 
 <br/>
 
-## use a `json file` as a database (in node)
+## 💾 use a `json file` as a database (in node)
 
 ```js
 import {file} from "dbmage/x/drivers/file.js"
@@ -197,7 +197,7 @@ const database = file({
 
 <br/>
 
-## the devil is in the details
+## 😈 the devil is in the details
 
 ### conditions
 
@@ -328,7 +328,7 @@ for this, you should use dbmage's `Id` class, which stores ids in a 256-bit bina
 
 <br/>
 
-## handy helpers
+## 🛠️ handy helpers
 
 ### subsection
 
