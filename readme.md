@@ -29,74 +29,88 @@ the localStorage driver is also interesting. in the [xiome](https://github.com/c
 
 ## let's play with a dbmage in-memory database
 
-```js
-import * as dbmage from "dbmage"
-import {find, and, or} from "dbmage"
+- make a memory database
+  ```js
+  import * as dbmage from "dbmage"
+  import {find, and, or} from "dbmage"
 
-const database = dbmage.memory({
-  // tell dbmage about the shape of your database schema
-  shape: {
-    myTable: true,
-  },
-})
+  const database = dbmage.memory({
+    // tell dbmage about the shape of your database schema
+    shape: {
+      myTable: true,
+    },
+  })
 
-// insert a row
-await database.tables.myTable.create({
-  userId: 1,
-  email: "user1@example.com",
-})
-
-// insert more rows
-await database.tables.myTable.create(
-  {userId: 2, email: "user2@example.com"},
-  {userId: 3, email: "user3@example.com"},
-)
-
-// read all rows in a table
-const rows = await database.tables.myTable.read({conditions: false})
-
-// read one particular row
-const row = await database.tables.myTable.readOne(find({userId: 1}))
-
-// read with fancy conditions
-const rows2 = await database.tables.myTable.read({
-  conditions: or(
-    {search: {email: /example\.com$/i}},
-    and(
-      {greater: {userId: 0}},
-      {less: {userId: 999}},
+  ```
+- insert a row
+  ```js
+  await database.tables.myTable.create({
+    userId: 1,
+    email: "user1@example.com",
+  })
+  ```
+- insert more rows
+  ```js
+  await database.tables.myTable.create(
+    {userId: 2, email: "user2@example.com"},
+    {userId: 3, email: "user3@example.com"},
+  )
+  ```
+- read all rows in a table
+  ```js
+  // read all rows in a table
+  const rows = await database.tables.myTable.read({conditions: false})
+  ```
+- read one particular row
+  ```js
+  // read one particular row
+  const row = await database.tables.myTable.readOne(find({userId: 1}))
+  ```
+- read with fancy conditions
+  ```js
+  const rows2 = await database.tables.myTable.read({
+    conditions: or(
+      {search: {email: /example\.com$/i}},
+      and(
+        {greater: {userId: 0}},
+        {less: {userId: 999}},
+      ),
     ),
-  ),
-})
-
-// read rows with pagination controls
-const rows3 = await database.tables.myTable.read({
-  conditions: false,
-  limit: 10,
-  offset: 5,
-  order: {userId: "descend"},
-})
-
-// update a row
-await database.tables.myTable.update({
-  ...find({userId: 1}),
-  write: {email: "superuser1@example.com"},
-})
-
-// delete a row
-await database.tables.myTable.delete(find({userId: 2}))
-
-// count rows
-const count = await database.tables.myTable.count({conditions: false})
-
-// transactions? even in-memory? you betchya!
-const result = await database.transaction(async({tables, abort}) => {
-  await tables.myTable.delete(find({userId: 1}))
-  await tables.myTable.create({userId: 4, email: "user4@example.com"})
-  const result = await tables.myTable.count({conditions: false})
-  return result
-})
-```
+  })
+  ```
+- read rows with pagination controls
+  ```js
+  const rows3 = await database.tables.myTable.read({
+    conditions: false,
+    limit: 10,
+    offset: 5,
+    order: {userId: "descend"},
+  })
+  ```
+- update a row
+  ```js
+  await database.tables.myTable.update({
+    ...find({userId: 1}),
+    write: {email: "superuser1@example.com"},
+  })
+  ```
+- delete a row
+  ```js
+  await database.tables.myTable.delete(find({userId: 2}))
+  ```
+- count rows
+  ```js
+  const count = await database.tables.myTable.count({conditions: false})
+  ```
+- transactions? even in-memory? you betchya!
+  ```js
+  const result = await database.transaction(async({tables, abort}) => {
+    await tables.myTable.delete(find({userId: 1}))
+    await tables.myTable.create({userId: 4, email: "user4@example.com"})
+    const result = await tables.myTable.count({conditions: false})
+    return result
+  })
+  ```
 
 ### you can nest tables arbitrarily
 
