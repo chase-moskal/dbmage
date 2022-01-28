@@ -4,7 +4,7 @@ import {Suite, expect, assert} from "cynic"
 import sequencer from "./tools/sequencer/sequencer.test.js"
 
 import {Id} from "./id.js"
-import * as dbproxy from "./dbmage.js"
+import * as dbmage from "./dbmage.js"
 import {and, find, or} from "./helpers.js"
 import {fallback} from "./handy/fallback.js"
 import {getRando} from "./rando/get-rando.js"
@@ -28,7 +28,7 @@ const demoShape: SchemaToShape<DemoSchema> = {
 }
 
 async function setupThreeUserDatabase() {
-	const database = dbproxy.memory<DemoSchema>({shape: demoShape})
+	const database = dbmage.memory<DemoSchema>({shape: demoShape})
 	await Promise.all([
 		database.tables.users.create({userId: "u123", balance: 100, location: "america"}),
 		database.tables.users.create({userId: "u124", balance: 0, location: "canada"}),
@@ -235,7 +235,7 @@ export default <Suite>{
 		},
 		"save and load ids": async() => {
 			const rando = await getRando()
-			const {tables: {table}} = dbproxy.memory<{table: {id: Id, a: number}}>({shape: {table: true}})
+			const {tables: {table}} = dbmage.memory<{table: {id: Id, a: number}}>({shape: {table: true}})
 			const a1 = {id: rando.randomId(), a: 1}
 			const a2 = {id: rando.randomId(), a: 2}
 			await table.create(a1)
@@ -254,7 +254,7 @@ export default <Suite>{
 				keyThatWasWrittenTo = key
 				return storage.write(key, data)
 			}}
-			const {tables} = dbproxy.flex<{
+			const {tables} = dbmage.flex<{
 				alpha: {
 					bravo: {
 						charlie: {x: string}
@@ -361,7 +361,7 @@ export default <Suite>{
 		}
 		return {
 			"read all rows from constrained table": async() => {
-				const {tables: {users}} = dbproxy.memory<DemoSchema>({shape: demoShape})
+				const {tables: {users}} = dbmage.memory<DemoSchema>({shape: demoShape})
 				const alpha = constrainAppTable(users, "a1")
 				await alpha.create(
 					{userId: "u1", balance: 101, location: "canada"},
@@ -371,7 +371,7 @@ export default <Suite>{
 				expect(results.length).equals(2)
 			},
 			"apply app id constraint": async() => {
-				const {tables: {users}} = dbproxy.memory<DemoSchema>({shape: demoShape})
+				const {tables: {users}} = dbmage.memory<DemoSchema>({shape: demoShape})
 				const a1 = constrainAppTable(users, "a1")
 				const a2 = constrainAppTable(users, "a2")
 				await a1.create({userId: "u1", balance: 100, location: "america"})
@@ -394,7 +394,7 @@ export default <Suite>{
 	},
 	"subsection": {
 		async "basic database subsection is readable"() {
-			const database = dbproxy.memory<{
+			const database = dbmage.memory<{
 				layer1: {
 					layer2: {
 						loltable: {n: number}
@@ -412,14 +412,14 @@ export default <Suite>{
 				{n: 2},
 				{n: 3},
 			)
-			const layer2 = dbproxy.subsection(database, tables => {
+			const layer2 = dbmage.subsection(database, tables => {
 				return tables.layer1.layer2
 			})
 			const rows = await layer2.tables.loltable.read({conditions: false})
 			expect(rows.length).equals(3)
 		},
 		async "data written within subsection is readable outside"() {
-			const database = dbproxy.memory<{
+			const database = dbmage.memory<{
 				layer1: {
 					layer2: {
 						loltable: {n: number}
@@ -437,7 +437,7 @@ export default <Suite>{
 				{n: 2},
 				{n: 3},
 			)
-			const layer2 = dbproxy.subsection(database, tables => {
+			const layer2 = dbmage.subsection(database, tables => {
 				return tables.layer1.layer2
 			})
 			await layer2.tables.loltable.create(
