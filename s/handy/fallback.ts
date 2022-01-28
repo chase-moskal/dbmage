@@ -1,6 +1,6 @@
 
-import {memory} from "../dbmage.js"
 import {Row, Table} from "../types.js"
+import {memory} from "../drivers/memory.js"
 
 export function fallback<xRow extends Row>({table, fallbackRows}: {
 		table: Table<xRow>

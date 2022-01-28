@@ -1,7 +1,7 @@
 
 import {flex} from "./flex.js"
 import {Schema, SchemaToShape} from "../types.js"
-import {simpleFlexStorage} from "../dbmage.js"
+import {simpleFlexStorage} from "../flex-storage/simple-flex-storage.js"
 
 export function localStorage<xSchema extends Schema>({
 		shape,
