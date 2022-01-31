@@ -380,7 +380,7 @@ const database = dbmage.memory({
 
 const combinedTable = dbmage.fallback({
   table: database.tables.alphaTable,
-  fallbackRows: {userId: 1},
+  fallbackRows: [{userId: 1}],
 })
 
 await combinedTable.create({userId: 2})
