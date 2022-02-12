@@ -28,4 +28,10 @@ export class Id {
 	get string() { return this.#string }
 	toBinary() { return this.#binary }
 	toString() { return this.#string }
+
+	equals(id: Id | string) {
+		return typeof id === "string"
+			? this.#string === id
+			: this.#string === id.toString()
+	}
 }

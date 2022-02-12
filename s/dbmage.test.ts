@@ -56,6 +56,12 @@ export default <Suite>{
 					expect(id_string).equals(id_back_from_string.toString())
 				}
 			},
+			"ids can be compared with equals": async() => {
+				const id = rando.randomId()
+				const id2 = Id.fromString(id.toString())
+				expect(id.equals(id2)).equals(true)
+				expect(id.equals(id.toString())).equals(true)
+			},
 		}
 	},
 	sequencer,
