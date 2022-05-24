@@ -1,7 +1,7 @@
 
 import {Collection, MongoClient, TransactionOptions} from "mongodb"
 
-import {objectMap} from "../tools/object-map.js"
+import {objectMap, objectTransform, objectMap3} from "../tools/object-map.js"
 import {down, downs, up, ups} from "./mongo/conversions.js"
 import {orderToSort, prepareQuery} from "./mongo/queries.js"
 import {makeTableNameWithUnderscores} from "./utils/make-table-name-with-underscores.js"
@@ -60,6 +60,18 @@ export function mongo<xSchema extends Schema>({
 			async count(conditional) {
 				const query = prepareQuery(conditional)
 				return collection.countDocuments(query)
+			},
+			async average({fields, ...conditional}) {
+				const query = prepareQuery(conditional)
+				const aggr = await collection.aggregate([
+					{$match: query},
+					{$group: {
+						_id: null,
+						...objectMap3(fields, (value, key) => [key, {$avg: "$" + key}]),
+					}},
+				]).toArray()
+				const [document] = aggr
+				return objectMap3(fields, (value, key) => <number>document[key])
 			},
 			async readOne(conditional) {
 				const query = prepareQuery(conditional)

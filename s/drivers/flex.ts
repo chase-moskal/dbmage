@@ -37,14 +37,15 @@ export function flex<xSchema extends Schema>({
 						})
 					}
 					return typeof value === "boolean"
-						? <Table<Row>>{
+						? asTable({
 							create: prep("create"),
 							read: prep("read"),
 							update: prep("update"),
 							delete: prep("delete"),
 							count: prep("count"),
+							average: prep("average"),
 							readOne: prep("readOne"),
-						}
+						})
 						: recurse(value, currentPath)
 				})
 			}
@@ -60,4 +61,8 @@ export function flex<xSchema extends Schema>({
 			})
 		},
 	}
+}
+
+function asTable<xTable extends Table<Row>>(table: xTable) {
+	return table
 }
