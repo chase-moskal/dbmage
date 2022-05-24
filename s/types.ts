@@ -47,9 +47,9 @@ export interface Table<xRow extends Row> {
 	readOne(o: Conditional<xRow>): Promise<xRow>
 	count(o: Conditional<xRow>): Promise<number>
 
-	average<xAveraged extends Partial<xRow>>(o: Conditional<xRow> & {
-		fields: {[P in keyof xAveraged]: true}
-	}): Promise<{[P in keyof xAveraged]: number}>
+	average<xAveraged extends {[P in keyof Partial<xRow>]: true}>(
+		o: Conditional<xRow> & {fields: xAveraged}
+	): Promise<{[P in keyof xAveraged]: number}>
 }
 
 export type RowFromTable<xTable extends Table<Row>> =

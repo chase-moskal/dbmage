@@ -76,16 +76,19 @@ export async function memoryTransaction({
 						},
 						async average({fields, ...o}) {
 							const rows = cache.filter(row => rowVersusConditional(row, o))
-							return objectMap3(fields, () => {
-								if (rows.length) {
-									const sum = rows.reduce(
-										(previous, row) => previous + <number>row[key],
-										0
-									)
-									return sum / rows.length
+							return objectMap3(fields, (x, key) => {
+								let sum = 0
+								let total = 0
+								for (const row of rows) {
+									const value = row[key]
+									if (typeof value === "number" && !isNaN(value)) {
+										sum += value
+										total += 1
+									}
 								}
-								else
-									return 0
+								return total > 0
+									? sum / total
+									: 0
 							})
 						},
 						async readOne(o) {

@@ -5,9 +5,9 @@
 			"type": "node",
 			"request": "launch",
 			"name": "debug",
-			"program": "${workspaceFolder}/node_modules/cynic/x/cli.js",
-			"args": ["node x/tests.test.js"],
-			"stopOnEntry": true
+			"program": "${workspaceFolder}/node_modules/cynic/dist/cli.js",
+			"args": ["node", "x/dbmage.test.js"],
+			"stopOnEntry": false
 		}
 	]
 }

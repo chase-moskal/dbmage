@@ -251,6 +251,96 @@ export default <Suite>{
 			expect(b1.a).equals(1)
 			assert(b1.id instanceof Id, "recovered id is instance")
 		},
+		"average": {
+			async "can find average of a numerical field"() {
+				type ExampleSchema = {data: {alpha: number, bravo: number}}
+				const database = dbmage.memory<ExampleSchema>({shape: {data: true}})
+				await Promise.all([
+					database.tables.data.create(
+						{alpha: 3, bravo: 1},
+						{alpha: 4, bravo: 1},
+						{alpha: 6, bravo: 1},
+						{alpha: 7, bravo: 1},
+					)
+				])
+				const averages = await database.tables.data.average({
+					fields: {alpha: true},
+					conditions: false,
+				})
+				expect(averages.alpha).ok()
+				expect(averages.alpha).equals(5)
+				expect((averages as any).bravo).not.ok()
+			},
+			async "can find average of multiple numerical fields"() {
+				type ExampleSchema = {data: {alpha: number, bravo: number}}
+				const database = dbmage.memory<ExampleSchema>({shape: {data: true}})
+				await Promise.all([
+					database.tables.data.create(
+						{alpha: 3, bravo: 8},
+						{alpha: 4, bravo: 9},
+						{alpha: 6, bravo: 11},
+						{alpha: 7, bravo: 12},
+					)
+				])
+				const averages = await database.tables.data.average({
+					fields: {alpha: true, bravo: true},
+					conditions: false,
+				})
+				expect(averages.alpha).ok()
+				expect(averages.alpha).equals(5)
+				expect(averages.bravo).ok()
+				expect(averages.bravo).equals(10)
+			},
+			async "can find average, even when some records are void"() {
+				type ExampleSchema = {data: {alpha: number, bravo: number}}
+				const database = dbmage.memory<ExampleSchema>({shape: {data: true}})
+				await Promise.all([
+					database.tables.data.create(
+						{alpha: 3, bravo: null},
+						{alpha: undefined, bravo: 9},
+						{alpha: undefined, bravo: 11},
+						{alpha: 7, bravo: null},
+					)
+				])
+				const averages = await database.tables.data.average({
+					fields: {alpha: true, bravo: true},
+					conditions: false,
+				})
+				expect(averages.alpha).ok()
+				expect(averages.alpha).equals(5)
+				expect(averages.bravo).ok()
+				expect(averages.bravo).equals(10)
+			},
+			async "average returns zero when there are no records"() {
+				type ExampleSchema = {data: {alpha: number, bravo: number}}
+				const database = dbmage.memory<ExampleSchema>({shape: {data: true}})
+				const averages = await database.tables.data.average({
+					fields: {alpha: true},
+					conditions: false,
+				})
+				expect(averages.alpha).equals(0)
+			},
+			async "can average rows with conditions"() {
+				type ExampleSchema = {data: {alpha: number, bravo: number}}
+				const database = dbmage.memory<ExampleSchema>({shape: {data: true}})
+				await Promise.all([
+					database.tables.data.create(
+						{alpha: 3, bravo: 1},
+						{alpha: 4, bravo: 1},
+						{alpha: 6, bravo: 1},
+						{alpha: 7, bravo: 1},
+						{alpha: 8, bravo: 0},
+						{alpha: 9, bravo: 0},
+					)
+				])
+				const averages = await database.tables.data.average({
+					fields: {alpha: true},
+					conditions: dbmage.and({equal: {bravo: 1}}),
+				})
+				expect(averages.alpha).ok()
+				expect(averages.alpha).equals(5)
+			},
+		},
 	},
 	"storage": {
 		async "storage keys represent full path to tables"() {
