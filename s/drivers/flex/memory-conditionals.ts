@@ -33,12 +33,14 @@ export function rowVersusCondition<xRow extends Row>(
 			failures += 1
 	}
 
+	const unwrapId = (x: any) =>
+		x instanceof Id
+			? x.string
+			: x
+
 	const checks: {[key: string]: Evaluator} = {
 		set: a => a !== undefined && a !== null,
-		equal: (a, b) =>
-			a instanceof Id
-				? a.string === b.string
-				: a === b,
+		equal: (a, b) => unwrapId(a) === unwrapId(b),
 		greater: (a, b) => a > b,
 		greatery: (a, b) => a >= b,
 		less: (a, b) => a < b,
