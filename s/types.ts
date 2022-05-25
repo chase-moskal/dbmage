@@ -7,6 +7,7 @@ import type {TransactionOptions} from "mongodb"
 ////////
 
 export type Value =
+	| null
 	| undefined
 	| boolean
 	| number
