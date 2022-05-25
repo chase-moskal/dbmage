@@ -7,6 +7,7 @@ import type {TransactionOptions} from "mongodb"
 ////////
 
 export type Value =
+	| null
 	| undefined
 	| boolean
 	| number
@@ -46,6 +47,10 @@ export interface Table<xRow extends Row> {
 
 	readOne(o: Conditional<xRow>): Promise<xRow>
 	count(o: Conditional<xRow>): Promise<number>
+
+	average<xAveraged extends {[P in keyof Partial<xRow>]: true}>(
+		o: Conditional<xRow> & {fields: xAveraged}
+	): Promise<{[P in keyof xAveraged]: number}>
 }
 
 export type RowFromTable<xTable extends Table<Row>> =

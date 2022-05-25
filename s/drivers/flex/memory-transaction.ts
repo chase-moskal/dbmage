@@ -1,7 +1,7 @@
 
 import {RowStorage} from "./row-storage.js"
 import {applyOperation} from "./apply-operation.js"
-import {objectMap} from "../../tools/object-map.js"
+import {objectMap, objectMap3} from "../../tools/object-map.js"
 import {prefixFunctions} from "./prefix-functions.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
 import {Action, Row, Shape, Table, Tables, Operation, RemoveIndex} from "../../types.js"
@@ -73,6 +73,23 @@ export async function memoryTransaction({
 						async count(o) {
 							const rows = cache.filter(row => rowVersusConditional(row, o))
 							return rows.length
+						},
+						async average({fields, ...o}) {
+							const rows = cache.filter(row => rowVersusConditional(row, o))
+							return objectMap3(fields, (x, key) => {
+								let sum = 0
+								let total = 0
+								for (const row of rows) {
+									const value = row[key]
+									if (typeof value === "number" && !isNaN(value)) {
+										sum += value
+										total += 1
+									}
+								}
+								return total > 0
+									? sum / total
+									: 0
+							})
 						},
 						async readOne(o) {
 							return cache.find(row => rowVersusConditional(row, o))
