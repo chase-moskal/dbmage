@@ -267,7 +267,7 @@ export type UnconstrainSchema<xConstraint extends Row, xSchema extends Schema> =
 	[P in keyof xSchema]: xSchema[P] extends Row
 		? UnconstrainRow<xConstraint, xSchema[P]>
 		: xSchema[P] extends Schema
-			? ConstrainSchema<xConstraint, xSchema[P]>
+			? UnconstrainSchema<xConstraint, xSchema[P]>
 			: never
 }
 
