@@ -466,6 +466,21 @@ export default <Suite>{
 				const results = await alpha.read({conditions: false})
 				expect(results.length).equals(2)
 			},
+			"constrained unconditional reading table doesn't bleed outside rows": async() => {
+				const {tables: {users}} = dbmage.memory<DemoSchema>({shape: demoShape})
+				const a1 = constrainAppTable(users, "a1")
+				const a2 = constrainAppTable(users, "a2")
+				await a1.create(
+					{userId: "u1", balance: 101, location: "canada"},
+					{userId: "u2", balance: 102, location: "america"},
+				)
+				await a2.create(
+					{userId: "u3", balance: 103, location: "finland"},
+					{userId: "u4", balance: 104, location: "norway"},
+				)
+				const results = await a1.read({conditions: false})
+				expect(results.length).equals(2)
+			},
 			"apply app id constraint": async() => {
 				const {tables: {users}} = dbmage.memory<DemoSchema>({shape: demoShape})
 				const a1 = constrainAppTable(users, "a1")
