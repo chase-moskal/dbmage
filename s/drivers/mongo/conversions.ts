@@ -5,9 +5,6 @@ import {Id} from "../../id.js"
 import {Row} from "../../types.js"
 import {objectMap} from "../../tools/object-map.js"
 
-const toArrayBuffer = (buffer: Buffer): ArrayBuffer =>
-	new Uint8Array(buffer).buffer
-
 // strip away the mongo database id's -- we don't use 'em
 function skimMongoId<xRow extends Row>(row: xRow): xRow {
 	if (row) {
@@ -25,7 +22,7 @@ export function valueUp(value: any, key: string): any {
 
 export function valueDown(value: any, key: string): any {
 	return value instanceof Binary
-		? new Id(toArrayBuffer(value.buffer))
+		? new Id(value.buffer.buffer)
 		: value
 }
 

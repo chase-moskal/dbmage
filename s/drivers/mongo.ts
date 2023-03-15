@@ -1,8 +1,8 @@
 
 import {Collection, MongoClient, TransactionOptions} from "mongodb"
 
-import {objectMap, objectTransform, objectMap3} from "../tools/object-map.js"
 import {down, downs, up, ups} from "./mongo/conversions.js"
+import {objectMap, objectMap3} from "../tools/object-map.js"
 import {orderToSort, prepareQuery} from "./mongo/queries.js"
 import {makeTableNameWithUnderscores} from "./utils/make-table-name-with-underscores.js"
 import {AmbiguousUpdate, MongoDatabase, Row, Schema, SchemaToShape, SchemaToTables, Shape, Table, Tables} from "../types.js"
