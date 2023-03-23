@@ -11,7 +11,7 @@
 		"s"
 	],
 	"scripts": {
-		"build": "run-s clean compile test",
+		"build": "run-s clean compile",
 		"clean": "rimraf x && mkdirp x",
 		"compile": "tsc",
 		"watch": "npm run compile -s -- --watch",
