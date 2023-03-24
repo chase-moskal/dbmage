@@ -16,7 +16,9 @@
 		"compile": "tsc",
 		"watch": "npm run compile -s -- --watch",
 		"test": "cynic node x/dbmage.test.js",
-		"test-debug": "node inspect node_modules/cynic/dist/cli.js node x/dbmage.test.js"
+		"test-mongo": "cynic node x/drivers/mongo/mongo.test.js",
+		"test-debug": "node inspect node_modules/cynic/dist/cli.js node x/dbmage.test.js",
+		"test-debug-mongo": "node inspect node_modules/cynic/dist/cli.js node x/drivers/mongo/mongo.test.js"
 	},
 	"keywords": [
 		"database",
@@ -33,7 +35,7 @@
 	},
 	"homepage": "https://github.com/chase-moskal/dbmage#readme",
 	"devDependencies": {
-		"@types/node": "^18.15.5",
+		"@types/node": "^18.15.6",
 		"cynic": "^0.2.0",
 		"mkdirp": "^2.1.6",
 		"npm-run-all": "^4.1.5",

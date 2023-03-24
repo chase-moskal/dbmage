@@ -22,7 +22,7 @@ export function valueUp(value: any, key: string): any {
 
 export function valueDown(value: any, key: string): any {
 	return value instanceof Binary
-		? new Id(value.buffer.buffer)
+		? new Id(value.buffer)
 		: value
 }
 
